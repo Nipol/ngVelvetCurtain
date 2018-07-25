@@ -27,9 +27,12 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/normalize.css/normalize.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/ipfs/dist/index.min.js"
+            ]
           },
           "configurations": {
             "production": {

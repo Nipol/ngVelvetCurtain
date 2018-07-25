@@ -1,0 +1,5 @@
+<h1>Photos List</h1>
+
+<div id="photo-container">
+  <vc-photo-detail *ngFor="let photo of Photos" [ImageHash]="photo.hash" [ImageName]="photo.name"></vc-photo-detail>
+</div>

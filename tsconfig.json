@@ -8,13 +8,15 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es5",
+    "target": "esnext",
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "src/types"
     ],
     "lib": [
       "es2017",
       "dom"
-    ]
+    ],
+    "types": ["node"]
   }
 }

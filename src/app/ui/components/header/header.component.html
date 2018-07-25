@@ -1,0 +1,26 @@
+<nav>
+  <ul>
+    <li id="systembutton">
+    </li>
+    <li id="searchbox">
+      <input type="text" placeholder="Media Id">
+      <button >
+        <fa-icon [icon]="faThumbtack"></fa-icon>
+      </button>
+    </li>
+    <li id="navbox">
+      <ul>
+        <li>
+          <a routerLink="/upload" routerLinkActivate="active" routerLinkActiveOptions="{ exact: true }">
+            <fa-icon [icon]="faFileUpload"></fa-icon>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/setting" routerLinkActivate="active" routerLinkActiveOptions="{ exact: true }">
+            <fa-icon [icon]="faSlidersH"></fa-icon>
+          </a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
