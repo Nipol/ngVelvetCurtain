@@ -1,4 +1,4 @@
 <h1>Upload Component</h1>
 
-<input type="file" accept="image/*" (change)="handleFileUpload($event.target.files)"/>
+<input #upload multiple type="file" accept="image/*" (change)="handleFileUpload($event.target.files)"/>
 <input type="submit" (click)="submit()" value="Upload" />

@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { faStar } from '@fortawesome/free-solid-svg-icons';
+import { Component, OnInit, Input } from '@angular/core';
+import { faStar, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { IPFSService } from '../../../services/ipfs.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'vc-photo-panel',
@@ -8,11 +10,14 @@ import { faStar } from '@fortawesome/free-solid-svg-icons';
 })
 export class PhotoPanelComponent implements OnInit {
 
+  @Input()
+  ImageBlob: SafeUrl;
   faStar = faStar;
+  faSpinner = faSpinner;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }
-
 }

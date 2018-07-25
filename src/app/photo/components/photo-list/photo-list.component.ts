@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { IPFSService } from '../../../services/ipfs.service';
+import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'vc-photo-list',
@@ -10,11 +11,11 @@ import { IPFSService } from '../../../services/ipfs.service';
 })
 export class PhotoListComponent implements OnInit {
 
-  Photos: Array<any>;
+  Photos: Array<SafeUrl>;
   Addresses: string[];
 
-  constructor(private IPFS: IPFSService, private route: ActivatedRoute) {
-    this.Photos = new Array<any>();
+  constructor(private IPFS: IPFSService, private route: ActivatedRoute, private sanitizer: DomSanitizer) {
+    this.Photos = new Array<SafeUrl>();
   }
 
   async ngOnInit() {
@@ -22,19 +23,13 @@ export class PhotoListComponent implements OnInit {
       map(data => data['Photos'])
     ).subscribe((payload) => {
       payload.forEach(element => {
-        this.IPFS.getFileHash('photos', element.name).then((hash) => {
-          this.Photos.push({
-            hash: hash,
-            name: element.name
-          });
+        const hashAndExtension = element.name.split('.');
+        this.IPFS.getFileData(hashAndExtension[0]).then((bufferdata) => {
+          const blob = new Blob( [ bufferdata ], { type: `image/${hashAndExtension[1]}` } );
+          this.Photos.push(this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(blob)));
         });
       });
     });
-    // this.service.Addresses().subscribe(payload => this.Addresses = payload);
-  }
-
-  async FileHash(filename: string): Promise<any> {
-    return await this.IPFS.getFileHash('photos', filename);
   }
 
 }
