@@ -80,57 +80,42 @@ const IPFSInitialize = (ipfsd) => {
 };
 
 const IPFSStart = (ipfsd) => {
-  ipfsd.start((err, api) => {
-    if (err) {
-      console.error(err);
-    }
-
-    return api;
+  return new Promise<any>((resolve, reject) => {
+    ipfsd.start((err, api) => {
+      if (err) {
+        reject(err);
+        // console.error(err);
+      }
+      resolve(api);
+    });
   });
 };
-
-
-/**
- * IPFS를 시작 전에 repoPath의 api, repo.lock, config 파일을 제거 해준다.
- * https://github.com/pathephone/pathephone-desktop/blob/4cad8e420ef1007c15da25587581deff312be871/src/main/methods/startCommunication/startIpfsProcess/beforeIpfsDaemonStart.js
- * config의 경우에 software에 하드 코딩된 설정 값을 사용한다.
- *
- */
-
-// const IPFSFactory = require('ipfsd-ctl');
-// const factory = IPFSFactory.create({ type: "go" });
-
-// factory.spawn({ init: true, start: false, disposable: false, repoPath: '~/.velvetcurtain' }, (err, ipfsd) => {
-//   if (err) {
-//     console.log(err);
-//   }
-
-//   if (ipfsd.initialized) {
-//     startDaemon(ipfsd)
-//   } else {
-//     ipfsd.init((err) => {
-//       if (err) {
-//         console.log(err);
-//       }
-//       startDaemon(ipfsd);
-//     });
-//   }
-// })
-
-// const startDaemon = (ipfsd) => {
-//   ipfsd.start((err, api) => {
-//     if (err) {
-//       reject(err)
-//     }
-//     resolve(api)
-//   })
-// }
 
 if (process.env.ELECTRON_START_URL) {
   require('electron-reload')(__dirname);
 }
 
 let win;
+
+async function ipfsService() {
+  if (IPFSBeforeStart()) {
+    // ipfs = IPFSSpawn();
+    factory.spawn({ start: false, disposable: false, repoPath: VelvetCurtainRepo}, (err, ipfsd) => {
+      if (err) {
+        console.error(err);
+      }
+
+      ipfs = ipfsd;
+    });
+
+    if (!ipfs.initialized) {
+      IPFSInitialize(ipfs);
+    }
+
+    const api: any = await IPFSStart(ipfs);
+    return api;
+  }
+}
 
 function createWindow() {
   win = new BrowserWindow({
@@ -153,40 +138,49 @@ function createWindow() {
       slashes  : true
     });
 
-  if (IPFSBeforeStart()) {
-    // ipfs = IPFSSpawn();
-    factory.spawn({ start: false, disposable: false, repoPath: VelvetCurtainRepo}, (err, ipfsd) => {
-      if (err) {
-        console.error(err);
-      }
-
-      ipfs = ipfsd;
-      console.log(ipfs.initialized);
-    });
-
-    if (!ipfs.initialized) {
-      IPFSInitialize(ipfs);
-    }
-    const api = IPFSStart(ipfs);
-  }
-
   win.loadURL(startUrl);
 
+  if (process.env.ELECTRON_START_URL) {
+    win.webContents.openDevTools();
+  }
+
   win.on('closed', function() {
-    ipfs.stop((err) => {
-      if (err) {
-        console.error(err);
-      }
-    });
     win = null;
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
   });
 }
 
 app.on('ready', () => {
-  createWindow();
+  new Promise<any>((resolve, reject) => {
+    console.log('ipfsservice');
+    resolve(ipfsService());
+  }).then((api) => {
+    api.files.mkdir('/photos', (err) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log('created stared');
+    });
+
+    api.files.mkdir('/stared', (err) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log('created stared');
+    });
+
+    createWindow();
+  });
 });
 
 app.on('window-all-closed', function() {
+  ipfs.stop((err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
   if (process.platform !== 'darwin') {
     app.quit();
   }

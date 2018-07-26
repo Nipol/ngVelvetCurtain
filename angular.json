@@ -31,7 +31,6 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/ipfs/dist/index.min.js"
             ]
           },
           "configurations": {

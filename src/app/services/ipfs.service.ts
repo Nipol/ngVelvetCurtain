@@ -14,20 +14,6 @@ export class IPFSService {
   constructor(
   ) {
     this.node = ipfsAPI('localhost', '5001', {protocol: 'http'});
-
-    this.node.files.mkdir('/photos', (err) => {
-      if (err) {
-        throw err;
-      }
-      console.log('created photos');
-    });
-
-    this.node.files.mkdir('/stared', (err) => {
-      if (err) {
-        throw err;
-      }
-      console.log('created stared');
-    });
   }
 
   public Id(): Observable<string> {
