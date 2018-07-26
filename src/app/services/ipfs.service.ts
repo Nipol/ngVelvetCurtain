@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-declare var Ipfs: any;
+import ipfsAPI from 'ipfs-api';
 
 @Injectable({
   providedIn: 'root'
@@ -13,60 +13,20 @@ export class IPFSService {
 
   constructor(
   ) {
-    this.node = new Ipfs({
-      repo: 'VelvetCurtain',
-      EXPERIMENTAL: {
-        pubsub: true,
-      },
-      config: {
-        Addresses: {
-          Swarm: [
-            '/dns4/wrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star'
-          ]
-        }
+    this.node = ipfsAPI('localhost', '5001', {protocol: 'http'});
+
+    this.node.files.mkdir('/photos', (err) => {
+      if (err) {
+        throw err;
       }
+      console.log('created photos');
     });
 
-    this.node.on('ready', () => {
-      console.log('Online status: ', this.node.isOnline() ? 'online' : 'offline');
-    });
-
-    this.node.on('init', () => {
-      this.node.files.mkdir('/photos', (err) => {
-        if (err) {
-          throw err;
-        }
-        console.log('created photos');
-      });
-
-      this.node.files.mkdir('/stared', (err) => {
-        if (err) {
-          throw err;
-        }
-        console.log('created stared');
-      });
-    });
-
-    if (this.node.isOnline()) {
-      this.Running = true;
-    } else {
-      this.node.once('ready', () => {
-        this.Running = true;
-      });
-    }
-  }
-
-  public Ready(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      if (this.node.isOnline()) {
-        console.log('ready1');
-        resolve(true);
-      } else {
-        this.node.on('ready', () => {
-          console.log('ready2');
-          resolve(true);
-        });
+    this.node.files.mkdir('/stared', (err) => {
+      if (err) {
+        throw err;
       }
+      console.log('created stared');
     });
   }
 

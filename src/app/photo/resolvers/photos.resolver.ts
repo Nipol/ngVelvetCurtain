@@ -10,8 +10,6 @@ export class PhotosResolver implements Resolve < any[] > {
   constructor(private IPFS: IPFSService) {}
 
   async resolve(): Promise<any> {
-    if (await this.IPFS.Ready()) {
-      return await this.IPFS.getPhotos();
-    }
+    return await this.IPFS.getPhotos();
   }
 }

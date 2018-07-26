@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { IPFSService } from '../../../services/ipfs.service';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
+import { element } from '../../../../../node_modules/protractor';
 
 @Component({
   selector: 'vc-photo-list',
@@ -22,13 +23,17 @@ export class PhotoListComponent implements OnInit {
     this.route.data.pipe(
       map(data => data['Photos'])
     ).subscribe((payload) => {
+      console.log(payload);
       payload.forEach(element => {
-        const hashAndExtension = element.name.split('.');
-        this.IPFS.getFileData(hashAndExtension[0]).then((bufferdata) => {
-          const blob = new Blob( [ bufferdata ], { type: `image/${hashAndExtension[1]}` } );
-          this.Photos.push(this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(blob)));
-        });
+        this.Photos.push(this.sanitizer.bypassSecurityTrustUrl(`http://localhost:8080/ipfs/${element.name.split('.')[0]}`));
       });
+      // payload.forEach(element => {
+      //   const hashAndExtension = element.name.split('.');
+      //   this.IPFS.getFileData(hashAndExtension[0]).then((bufferdata) => {
+      //     const blob = new Blob( [ bufferdata ], { type: `image/${hashAndExtension[1]}` } );
+      //     this.Photos.push(this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(blob)));
+      //   });
+      // });
     });
   }
 
