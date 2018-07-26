@@ -154,14 +154,13 @@ function createWindow() {
 
 app.on('ready', () => {
   new Promise<any>((resolve, reject) => {
-    console.log('ipfsservice');
     resolve(ipfsService());
   }).then((api) => {
     api.files.mkdir('/photos', (err) => {
       if (err) {
         console.log(err);
       }
-      console.log('created stared');
+      console.log('created photos');
     });
 
     api.files.mkdir('/stared', (err) => {
@@ -171,6 +170,7 @@ app.on('ready', () => {
       console.log('created stared');
     });
 
+    // IPFS 서비스가 시작/초기화 이후에, 화면을 그리도록 함.
     createWindow();
   });
 });
