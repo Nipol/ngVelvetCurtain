@@ -12,7 +12,7 @@
     "e2e": "ng e2e",
     "postinstall": "node patch.js",
     "electron:tsc": "tsc main.ts --experimentalDecorators --emitDecoratorMetadata --module commonjs --moduleResolution node --types node --target esnext --typeRoots node_modules/@types ",
-    "electron:dev": "npm run electron:tsc && ng serve && ELECTRON_START_URL=http://localhost:4200 electron .",
+    "electron:dev": "npm run electron:tsc && ELECTRON_START_URL=http://localhost:4200 electron .",
     "electron:build": "npm run electron:tsc && npm run build && electron-packager ./ --asar.unpackDir=node_modules/go-ipfs-dep --platform=darwin --arch=x64 --overwrite"
   },
   "private": true,

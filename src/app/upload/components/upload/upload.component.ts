@@ -49,20 +49,21 @@ export class UploadComponent implements OnInit {
 
   async submit() {
     if (this.files.length === 1) {
-      await this.ipfs.PhotoAddToAlbum('photos', this.filesname[0], this.files[0]);
-      const hash = await this.ipfs.getFileHash('photos', this.filesname[0]);
-      const filename = this.filesname[0].split('.');
-      await this.ipfs.moveFile(`/photos/${this.filesname[0]}`, `/photos/${hash}.${filename[filename.length - 1]}`);
+      this.uploadImage('photos', this.filesname[0], this.files[0]);
     } else if (this.files.length > 1) {
       for (let index = 0; index < this.files.length; index++) {
-        const file = this.files[index];
-        await this.ipfs.PhotoAddToAlbum('photos', this.filesname[index], file);
-        const hash = await this.ipfs.getFileHash('photos', this.filesname[index]);
-        const filename = this.filesname[index].split('.');
-        await this.ipfs.moveFile(`/photos/${this.filesname[index]}`, `/photos/${hash}.${filename[filename.length - 1]}`);
+        this.uploadImage('photos', this.filesname[index], this.files[index]);
       }
     }
+
     this.uploadVariable.nativeElement.value = '';
+  }
+
+  private async uploadImage(targetAlbum: string, filename: string, file: any) {
+    await this.ipfs.PhotoAddToAlbum(targetAlbum, filename, file);
+    const hash = await this.ipfs.getFileHash(targetAlbum, filename);
+    const nameAndExtension = filename.split('.');
+    await this.ipfs.moveFile(`/${targetAlbum}/${filename}`, `/${targetAlbum}/${hash}.${nameAndExtension[nameAndExtension.length - 1]}`);
   }
 
 }
